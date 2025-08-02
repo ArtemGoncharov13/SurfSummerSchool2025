@@ -1,12 +1,14 @@
 package ru.adgoncharov.surfsummerschool2025.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.adgoncharov.surfsummerschool2025.ui.theme.Black
+import ru.adgoncharov.surfsummerschool2025.ui.theme.White
 import ru.adgoncharov.surfsummerschool2025.ui.theme.Yellow
 import ru.adgoncharov.surfsummerschool2025.ui.theme.interFontFamily
 
@@ -24,9 +27,13 @@ import ru.adgoncharov.surfsummerschool2025.ui.theme.interFontFamily
 fun ResultCard(
     correctAnswer: Int,
     allAnswer: Int,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
-    Card (
+    Card(
+        modifier = modifier,
         shape = RoundedCornerShape(46.dp),
+        colors = CardDefaults.cardColors(containerColor = White)
     ) {
         Column(
             modifier = Modifier
@@ -39,7 +46,12 @@ fun ResultCard(
             ComplimentText(correctAnswer, allAnswer)
         }
 
-        Button("Начать заново", modifier = Modifier.fillMaxWidth().padding(32.dp))
+        Button(
+            "Начать заново", modifier = Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
+            onClick = onClick,
+        )
     }
 }
 
@@ -107,5 +119,5 @@ fun ResultInStarPreview() {
 @Preview
 @Composable
 fun ResultCardPreview() {
-    ResultCard(4, 5)
+    ResultCard(4, 5, onClick =  {})
 }

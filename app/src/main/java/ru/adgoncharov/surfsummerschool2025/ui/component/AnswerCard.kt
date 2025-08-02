@@ -31,19 +31,22 @@ fun AnswerCard(
     answer: VariantAnswer = VariantAnswer.NONE,
     answerDescription: String,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
 ) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(CornerSize(16.dp)),
         border = if (answer != VariantAnswer.NONE) BorderStroke(1.dp, answer.borderColor) else null,
         colors = getColorCard(answer),
+        onClick = onClick,
     ) {
         Row(
             modifier = Modifier.padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             RadioButton(
-                answer
+                answer = answer,
+                onClick = onClick,
             )
 
             Text(

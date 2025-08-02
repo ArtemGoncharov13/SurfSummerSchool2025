@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -31,7 +32,13 @@ import ru.adgoncharov.surfsummerschool2025.ui.theme.interFontFamily
 
 @Composable
 fun QuestionCard(
-    currentAnswer: Int, allAnswers: Int, question: String,
+    currentAnswer: Int,
+    allAnswers: Int,
+    question: String,
+    answers: List<String>,
+    selectedAnswer: String?,
+    onAnswerSelected: (String) -> Unit,
+    onNextClicked: () -> Unit,
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = White),
@@ -45,26 +52,48 @@ fun QuestionCard(
         ) {
             Top(currentAnswer, allAnswers, question)
 
+            Spacer(modifier = Modifier.height(24.dp))
+
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                AnswerCard(VariantAnswer.NONE, "Груша", Modifier.fillMaxWidth())
-                AnswerCard(VariantAnswer.SELECTED, "Груша1", Modifier.fillMaxWidth())
-                AnswerCard(VariantAnswer.WRONG, "Груша2", Modifier.fillMaxWidth())
-                AnswerCard(VariantAnswer.CORRECT, "Груша3", Modifier.fillMaxWidth())
-                AnswerCard(
-                    VariantAnswer.NONE, "Груша3", Modifier
-                        .alpha(0f)
-                        .fillMaxWidth()
-                )
+                answers.forEach { answer ->
+                    var variant = when {
+                        selectedAnswer == null -> VariantAnswer.NONE
+                        selectedAnswer == answer -> VariantAnswer.SELECTED
+                        else -> VariantAnswer.NONE
+                    }
+
+                    AnswerCard(
+                        answer = variant,
+                        answerDescription = answer,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        onAnswerSelected(answer)
+                    }
+                }
+
+                repeat((5 - answers.size).coerceAtLeast(0)) {
+                    AnswerCard(
+                        answer = VariantAnswer.NONE,
+                        answerDescription = "",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .alpha(0f)
+                    )
+                }
             }
 
+            Spacer(modifier = Modifier.height(24.dp))
 
-            Button("Далее", modifier = Modifier.fillMaxWidth())
+            Button(
+                text = "Далее",
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onNextClicked,
+                enable = selectedAnswer != null
+            )
         }
     }
 }
@@ -125,7 +154,5 @@ fun QuestionText(question: String) {
 @Preview
 @Composable
 fun QuestionCardPreview() {
-    QuestionCard(
-        1, 5, "Как переводится слово \"apple\"?"
-    )
+
 }
