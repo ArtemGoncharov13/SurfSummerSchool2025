@@ -1,5 +1,6 @@
 package ru.adgoncharov.surfsummerschool2025.ui.screens
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,7 +20,8 @@ enum class Screen {
     Start,
     Quiz,
     Result,
-    Loading
+    Loading,
+    Error,
 }
 
 @Composable
@@ -53,11 +55,20 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 }
 
                 is StartScreenState.Error -> {
-                    // Здесь можно показать ошибку или экран с кнопкой "Попробовать снова"
+                    screen = Screen.Error
                 }
 
                 else -> Unit
             }
+        }
+
+        Screen.Error -> {
+            ErrorScreen(
+                onStart = {
+                    startViewModel.loadQuestions()
+                    screen = Screen.Loading
+                }
+            )
         }
 
         Screen.Quiz -> if (quizQuestions.isNotEmpty()) QuizScreen(
@@ -86,5 +97,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 screen = Screen.Start
             }
         )
+
     }
 }
