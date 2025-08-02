@@ -1,42 +1,65 @@
 package ru.adgoncharov.surfsummerschool2025.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.adgoncharov.surfsummerschool2025.ui.component.Logo
 import ru.adgoncharov.surfsummerschool2025.ui.component.QuestionCard
 import ru.adgoncharov.surfsummerschool2025.ui.theme.Blue
+import ru.adgoncharov.surfsummerschool2025.ui.theme.White
+import ru.adgoncharov.surfsummerschool2025.ui.theme.interFontFamily
+import ru.adgoncharov.surfsummerschool2025.viewmodels.QuizScreenViewModel
 import ru.adgoncharov.triviaapi.models.Question
 
 @Composable
 fun QuizScreen(
     questions: List<Question>,
+    viewModel: QuizScreenViewModel = viewModel(),
     onFinish: (correctAnswer: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var currentIndex by remember { mutableStateOf(0) }
-    var selectedAnswer by remember { mutableStateOf<String?>(null) }
-    var correctCount by remember { mutableStateOf(0) }
+    LaunchedEffect(true) {
+        if (questions.isNotEmpty()) {
+            viewModel.startQuiz(questions)
+        }
+    }
 
-    val currentQuestion = questions.getOrNull(currentIndex)
-    if (currentQuestion == null) {
+    val correctCount by viewModel.correctAnswerCount.collectAsState()
+    val quizFinished by viewModel.quizFinished.collectAsState()
+
+    if (quizFinished) {
         onFinish(correctCount)
         return
     }
 
+    val currentIndex by viewModel.currentQuestionIndex.collectAsState()
+    val selectedAnswer by viewModel.selectedAnswer.collectAsState()
+
+
+    val currentQuestion = viewModel.getCurrentQuestion()
+    if (currentQuestion == null) {
+        onFinish(correctCount)
+        return
+    }
     val shuffledAnswers = remember(currentQuestion) {
-        (currentQuestion.incorrectAnswers + listOfNotNull(currentQuestion.correctAnswer)).shuffled()
+        viewModel.getShuffledAnswers()
     }
     Column(
         modifier = modifier
@@ -51,22 +74,32 @@ fun QuizScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Logo()
+            Log.d(
+                "QuizScreen",
+                "Questions: ${questions[currentIndex].question}  Answer: ${questions[currentIndex].correctAnswer}"
+            )
             QuestionCard(
                 currentAnswer = currentIndex + 1,
                 allAnswers = questions.size,
                 question = currentQuestion.question,
                 answers = shuffledAnswers,
                 selectedAnswer = selectedAnswer,
-                onAnswerSelected = {selectedAnswer = it},
+                onAnswerSelected = {
+                    viewModel.selectAnswer(it)
+                },
                 onNextClicked = {
-                    if (selectedAnswer == currentQuestion.correctAnswer) {
-                        correctCount++
-                    }
-                    selectedAnswer = null
-                    currentIndex++
+                    viewModel.provideAnswer()
                 }
             )
         }
+
+        Text(
+            text = "Вернуться к предыдущим вопросам нельзя",
+            fontFamily = interFontFamily,
+            fontWeight = FontWeight.Normal,
+            color = White,
+            fontSize = 10.sp
+        )
     }
 }
 

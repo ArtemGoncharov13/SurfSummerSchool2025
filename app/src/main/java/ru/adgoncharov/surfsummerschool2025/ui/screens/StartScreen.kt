@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +30,7 @@ import ru.adgoncharov.surfsummerschool2025.state.StartScreenState
 import ru.adgoncharov.surfsummerschool2025.ui.component.Button
 import ru.adgoncharov.surfsummerschool2025.ui.component.Logo
 import ru.adgoncharov.surfsummerschool2025.ui.theme.Blue
+import ru.adgoncharov.surfsummerschool2025.ui.theme.White
 import ru.adgoncharov.surfsummerschool2025.ui.theme.interFontFamily
 import ru.adgoncharov.surfsummerschool2025.viewmodels.StartScreenViewModel
 import ru.adgoncharov.triviaapi.models.Question
@@ -37,11 +39,8 @@ import ru.adgoncharov.triviaapi.models.Question
 fun StartScreen(
     modifier: Modifier = Modifier,
     viewModel: StartScreenViewModel = viewModel(),
-    onSuccess: (List<Question>) -> Unit = {},
+    onStart: () -> Unit = {},
 ) {
-    val state by viewModel.state.collectAsState()
-    var startClicked by remember { mutableStateOf(false) }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -55,34 +54,7 @@ fun StartScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Logo()
-            WelcomeGroup(
-                onStartClick = {
-                    startClicked = true
-                    Log.d("StartActivity","Начало запроса")
-                    viewModel.loadQuestions()
-                    Log.d("StartActivity","Конец запроса")
-                }
-            )
-
-            when (state) {
-                is StartScreenState.Loading -> {
-                    Text("Загрузка...")
-                }
-                is StartScreenState.Success -> {
-                    val questions = (state as StartScreenState.Success).questions
-
-                    if (startClicked) {
-                        LaunchedEffect(Unit) {
-                            onSuccess(questions)
-                        }
-                    }
-                }
-                is StartScreenState.Error -> {
-                    val message = (state as StartScreenState.Error).message
-                    Text("Ошибка: $message")
-                }
-                else -> {}
-            }
+            WelcomeGroup(onStartClick = onStart)
         }
     }
 }
@@ -91,7 +63,8 @@ fun StartScreen(
 @Composable
 fun WelcomeGroup(onStartClick: () -> Unit = {}) {
     Card(
-        shape = RoundedCornerShape(46.dp)
+        shape = RoundedCornerShape(46.dp),
+        colors = CardDefaults.cardColors(containerColor = White),
     ) {
         Column(
             modifier = Modifier.padding(top = 32.dp, start = 24.dp, end = 24.dp, bottom = 32.dp),
@@ -119,5 +92,4 @@ fun WelcomeGroup(onStartClick: () -> Unit = {}) {
 @Preview
 @Composable
 fun StartScreenPreview() {
-    StartScreen()
 }
