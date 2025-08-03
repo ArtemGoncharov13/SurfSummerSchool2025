@@ -27,6 +27,7 @@ fun ErrorScreen(
     modifier: Modifier = Modifier,
     viewModel: StartScreenViewModel = viewModel(),
     onStart: () -> Unit = {},
+    onFilter: () -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -41,7 +42,7 @@ fun ErrorScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Logo()
-            WelcomeGroup(onStartClick = onStart)
+            WelcomeGroup(onStartClick = onStart, onFilter = onFilter)
         }
         Spacer(Modifier.height(16.dp))
         Text(

@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import ru.adgoncharov.surfsummerschool2025.repository.TriviaRepository
 import ru.adgoncharov.surfsummerschool2025.state.StartScreenState
+import ru.adgoncharov.triviaapi.models.Difficulty
+import ru.adgoncharov.triviaapi.repository.TriviaRepository
+
 
 class StartScreenViewModel : ViewModel() {
     private val repository = TriviaRepository()
@@ -15,18 +17,27 @@ class StartScreenViewModel : ViewModel() {
     private val _state = MutableStateFlow<StartScreenState>(StartScreenState.Idle)
     val state: StateFlow<StartScreenState> = _state
 
-    fun loadQuestions() {
+
+    fun loadQuestions(
+        amount: Int = 5,
+        categoryId: Int = 0,
+        difficulty: Difficulty = Difficulty.ANY
+    ) {
         viewModelScope.launch {
             _state.value = StartScreenState.Loading
             try {
-                val response = repository.getQuestions()
+                val response = repository.getQuestions(amount, categoryId, difficulty)
                 if (response.isSuccessful) {
                     val body = response.body()
                     val decodedQuestions = body?.results?.map { question ->
                         question.copy(
                             question = decodeHtmlEntities(question.question),
                             correctAnswer = decodeHtmlEntities(question.correctAnswer ?: ""),
-                            incorrectAnswers = question.incorrectAnswers?.map { decodeHtmlEntities(it) } ?: emptyList()
+                            incorrectAnswers = question.incorrectAnswers?.map {
+                                decodeHtmlEntities(
+                                    it
+                                )
+                            } ?: emptyList()
                         )
                     } ?: emptyList()
 

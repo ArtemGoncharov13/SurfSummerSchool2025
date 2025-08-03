@@ -3,7 +3,7 @@ package ru.adgoncharov.database.models.domain
 
 data class Question(
     val id: Long = 0,
-    val quizId: Long,
+    val quizId: Long = 0,
     val category: String,
     val type: String,
     val difficulty: String,

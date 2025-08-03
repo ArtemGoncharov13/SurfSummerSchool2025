@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import ru.adgoncharov.surfsummerschool2025.state.StartScreenState
 import ru.adgoncharov.surfsummerschool2025.ui.component.Button
 import ru.adgoncharov.surfsummerschool2025.ui.component.HistoryButton
@@ -45,7 +46,10 @@ fun StartScreen(
     modifier: Modifier = Modifier,
     viewModel: StartScreenViewModel = viewModel(),
     onStart: () -> Unit = {},
+    onFilter: () -> Unit = {},
 ) {
+
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -56,7 +60,7 @@ fun StartScreen(
                 .align(Alignment.TopCenter)
                 .padding(start = 16.dp, top = 16.dp)
                 .statusBarsPadding(),
-            onClick = {// тут мне нужно получать все Quiz
+            onClick = {// тут мне нужно получать все Quiz из БД
             }
         )
 
@@ -68,14 +72,15 @@ fun StartScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Logo()
-            WelcomeGroup(onStartClick = onStart)
+            WelcomeGroup(onStartClick = onStart, onFilter = onFilter)
         }
     }
 }
 
 
 @Composable
-fun WelcomeGroup(onStartClick: () -> Unit = {}) {
+fun WelcomeGroup(onStartClick: () -> Unit = {}, onFilter: () -> Unit = {}) {
+    var showDialog by remember { mutableStateOf(false) }
     Card(
         shape = RoundedCornerShape(46.dp),
         colors = CardDefaults.cardColors(containerColor = White),
@@ -95,11 +100,74 @@ fun WelcomeGroup(onStartClick: () -> Unit = {}) {
             Button(
                 text = "Начать викторину",
                 modifier = Modifier.fillMaxWidth(),
-                onClick = onStartClick,
+                onClick = {
+                    showDialog = true
+                },
             )
         }
+    }
 
+    if (showDialog) {
+        FilterSettingsDialog(
+            onStart = onStartClick,
+            onFilter = onFilter,
+            onDismiss = { showDialog = false },
+        )
+    }
+}
 
+@Composable
+fun FilterSettingsDialog(
+    onStart: () -> Unit = {},
+    onFilter: () -> Unit = {},
+    onDismiss: () -> Unit = {}
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        FilterSettingsContent(
+            onStart = onStart,
+            onFilter = onFilter
+        )
+    }
+}
+
+@Preview
+@Composable
+fun FilterSettingsDialogPreview() {
+    FilterSettingsDialog()
+}
+
+@Composable
+fun FilterSettingsContent(onStart: () -> Unit = {}, onFilter: () -> Unit = {}) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(46.dp),
+        colors = CardDefaults.cardColors(containerColor = White),
+    ) {
+        Column(
+            modifier = Modifier.padding(top = 32.dp, start = 24.dp, end = 24.dp, bottom = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(40.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = "Хотите настроить фильтры для вопросов?",
+                fontFamily = interFontFamily,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+            )
+
+            Button(
+                text = "Настроить",
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onFilter,
+            )
+
+            Button(
+                text = "Пропустить",
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onStart,
+            )
+        }
     }
 }
 
