@@ -6,10 +6,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.adgoncharov.surfsummerschool2025.state.StartScreenState
 import ru.adgoncharov.surfsummerschool2025.ui.component.Button
+import ru.adgoncharov.surfsummerschool2025.ui.component.HistoryButton
 import ru.adgoncharov.surfsummerschool2025.ui.component.Logo
 import ru.adgoncharov.surfsummerschool2025.ui.theme.Blue
 import ru.adgoncharov.surfsummerschool2025.ui.theme.White
@@ -41,15 +46,24 @@ fun StartScreen(
     viewModel: StartScreenViewModel = viewModel(),
     onStart: () -> Unit = {},
 ) {
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(Blue)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        HistoryButton(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(start = 16.dp, top = 16.dp)
+                .statusBarsPadding(),
+            onClick = {// тут мне нужно получать все Quiz
+            }
+        )
+
         Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(40.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -92,4 +106,5 @@ fun WelcomeGroup(onStartClick: () -> Unit = {}) {
 @Preview
 @Composable
 fun StartScreenPreview() {
+    StartScreen()
 }

@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "SurfSummerSchool2025"
 include(":app")
 include(":triviaApi")
+include(":database")
