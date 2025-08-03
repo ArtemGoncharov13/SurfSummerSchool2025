@@ -92,7 +92,7 @@ fun ComplimentText(correctAnswer: Int, allAnswer: Int = 5) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Почти идеально",
+            text = getHeaderCompliment(correctAnswer),
             fontSize = 24.sp,
             fontFamily = interFontFamily,
             color = Black,
@@ -100,13 +100,37 @@ fun ComplimentText(correctAnswer: Int, allAnswer: Int = 5) {
             textAlign = TextAlign.Center,
         )
         Text(
-            text = "4/5 — очень близко к совершенству. Ещё один шаг!",
+            text = "${correctAnswer}/$allAnswer" + getStringCompliment(correctAnswer),
             fontSize = 16.sp,
             fontFamily = interFontFamily,
             color = Black,
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center,
         )
+    }
+}
+
+fun getHeaderCompliment(correctAnswer: Int): String {
+    return when(correctAnswer) {
+        0 -> "Бывает и так!"
+        1 -> "Сложный вопрос?"
+        2 -> "Есть над чем поработать"
+        3 -> "Хороший результат!"
+        4 -> "Почти идеально!"
+        5 -> "Идеально!"
+        else -> ""
+    }
+}
+
+fun getStringCompliment(correctAnswer: Int): String {
+    return when(correctAnswer) {
+        0 -> " — не отчаивайтесь. Начните заново и удивите себя!"
+        1 -> " — иногда просто не ваш день. Следующая попытка будет лучше!"
+        2 -> " — не расстраивайтесь, попробуйте ещё раз!"
+        3 -> " — вы на верном пути. Продолжайте тренироваться!"
+        4 -> " — очень близко к совершенству. Ещё один шаг!"
+        5 -> " — вы ответили на всё правильно. Это блестящий результат!"
+        else -> ""
     }
 }
 
