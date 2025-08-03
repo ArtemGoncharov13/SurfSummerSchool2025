@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -41,9 +42,17 @@ android {
 
 dependencies {
 
+    ksp(libs.room.compiler)
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
+    
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
     implementation(project(":triviaApi"))
+    implementation(project(":database"))
 
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

@@ -17,20 +17,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.adgoncharov.surfsummerschool2025.ui.VariantAnswer
 import ru.adgoncharov.surfsummerschool2025.ui.theme.Black
 import ru.adgoncharov.surfsummerschool2025.ui.theme.LightGray
 import ru.adgoncharov.surfsummerschool2025.ui.theme.White
 import ru.adgoncharov.surfsummerschool2025.ui.theme.interFontFamily
-import ru.adgoncharov.triviaapi.models.Question
+import ru.adgoncharov.surfsummerschool2025.viewmodels.QuizResultScreenViewModel
+import ru.adgoncharov.triviaapi.models.QuestionModel
 
 @Composable
 fun AnswerEvaluation(
     currentAnswer: Int,
-    allAnswers: Int,
-    allShuffledAnswer: List<String>,
-    question: Question,
-    answer: String?
+    viewModel: QuizResultScreenViewModel = viewModel()
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = White),
@@ -44,9 +43,9 @@ fun AnswerEvaluation(
         ) {
             TopEvaluation(
                 currentAnswer,
-                allAnswers,
-                question,
-                checkAnswer(answer, question.correctAnswer)
+                viewModel.totalQuestions(),
+                viewModel.getQuestion(currentAnswer).question,
+                checkAnswer(viewModel.getAnswer(currentAnswer), viewModel.getQuestion(currentAnswer).correctAnswer)
             )
 
             Column(
@@ -57,9 +56,13 @@ fun AnswerEvaluation(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
-                for (answerVariant in allShuffledAnswer) {
+                for (answerVariant in viewModel.getShuffledAnswers(currentAnswer)) {
                     AnswerCard(
-                        answer = getAnswerStatusForAnswerCard(question.correctAnswer,answer, answerVariant),
+                        answer = getAnswerStatusForAnswerCard(
+                            viewModel.getQuestion(currentAnswer).correctAnswer,
+                            viewModel.getAnswer(currentAnswer),
+                            answerVariant
+                        ),
                         answerDescription = answerVariant,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -90,8 +93,8 @@ fun checkAnswer(answer: String?, correctAnswer: String): VariantAnswer {
 @Composable
 fun TopEvaluation(
     currentAnswerIndex: Int,
-    allAnswers: Int,
-    question: Question,
+    totalQuestions: Int,
+    question: String,
     answer: VariantAnswer,
 ) {
     Column(
@@ -102,7 +105,7 @@ fun TopEvaluation(
         Box(modifier = Modifier.fillMaxWidth()) {
             ProgressBar(
                 currentAnswerIndex + 1,
-                allAnswers,
+                totalQuestions = totalQuestions,
                 fontColor = LightGray,
                 modifier = Modifier.align(Alignment.CenterStart)
             )
@@ -116,24 +119,8 @@ fun TopEvaluation(
     }
 }
 
-@Preview(
-    showBackground = true
-)
 @Composable
-fun TopPreview2() {
-    Top(1, 5, "Как переводится слово \"apple\"?")
-}
-
-@Preview
-@Composable
-fun AnswerEvaluationPreview() {
-//    AnswerEvaluation(
-//        1, 5, "Как переводится слово \"apple\"?", VariantAnswer.NONE
-//    )
-}
-
-@Composable
-fun QuestionText(question: Question) {
+fun QuestionText(question: QuestionModel) {
     Text(
         text = question.question,
         fontSize = 18.sp,

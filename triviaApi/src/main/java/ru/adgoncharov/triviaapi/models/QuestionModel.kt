@@ -2,7 +2,7 @@ package ru.adgoncharov.triviaapi.models
 
 import com.google.gson.annotations.SerializedName
 
-data class Question(
+data class QuestionModel(
     @SerializedName("category")
     val category: String,
 

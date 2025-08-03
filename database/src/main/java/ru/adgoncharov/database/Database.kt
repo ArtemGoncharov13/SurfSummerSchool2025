@@ -10,7 +10,7 @@ import ru.adgoncharov.database.dao.QuizDao
 import ru.adgoncharov.database.models.QuestionDto
 import ru.adgoncharov.database.models.QuizDto
 
-const val DATABASE_VERSION_CODE = 1
+const val DATABASE_VERSION_CODE = 3
 
 @Database(entities = [QuizDto::class, QuestionDto::class], version = DATABASE_VERSION_CODE)
 @TypeConverters(Converters::class)

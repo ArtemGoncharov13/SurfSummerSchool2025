@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import ru.adgoncharov.surfsummerschool2025.state.StartScreenState
 import ru.adgoncharov.triviaapi.models.Difficulty
 import ru.adgoncharov.triviaapi.repository.TriviaRepository
+import ru.adgoncharov.surfsummerschool2025.mappers.toDomainQuestion
 
 
 class StartScreenViewModel : ViewModel() {
@@ -41,7 +42,9 @@ class StartScreenViewModel : ViewModel() {
                         )
                     } ?: emptyList()
 
-                    _state.value = StartScreenState.Success(decodedQuestions)
+                    val mappedQuestion = decodedQuestions.map { it.toDomainQuestion() }.toList()
+
+                    _state.value = StartScreenState.Success(mappedQuestion)
                 } else {
                     _state.value = StartScreenState.Error("Ошибка запроса: ${response.code()}")
                 }

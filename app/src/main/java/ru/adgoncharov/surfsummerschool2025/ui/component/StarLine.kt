@@ -2,9 +2,11 @@ package ru.adgoncharov.surfsummerschool2025.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -19,24 +21,28 @@ import ru.adgoncharov.surfsummerschool2025.ui.theme.Yellow
 fun StarLine(
     countFillStar: Int,
     countAllStar: Int = 5,
+    sizeStar: Int = 72,
+    modifier: Modifier = Modifier,
 ) {
     Row(
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         repeat(countFillStar) {
-            CorrectStar()
+            CorrectStar(sizeStar)
         }
         repeat(countAllStar - countFillStar) {
-            IncorrectStar()
+            IncorrectStar(sizeStar)
         }
 
     }
 }
 
 @Composable
-fun CorrectStar() {
+fun CorrectStar(starSize: Int) {
     Icon(
+        modifier = if (starSize != 72) Modifier.size(starSize.dp) else Modifier,
         imageVector = ImageVector.vectorResource(R.drawable.ic_fill_star),
         contentDescription = "Correct Star",
         tint = Color.Unspecified,
@@ -44,8 +50,9 @@ fun CorrectStar() {
 }
 
 @Composable
-fun IncorrectStar() {
+fun IncorrectStar(starSize: Int) {
     Icon(
+        modifier = if (starSize != 72) Modifier.size(starSize.dp) else Modifier,
         imageVector = ImageVector.vectorResource(R.drawable.ic_unfill_star),
         contentDescription = "Fill Star",
         tint = Color.Unspecified,

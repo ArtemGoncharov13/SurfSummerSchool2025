@@ -40,7 +40,6 @@ fun FilterScreen(
     viewModel: FilterScreenViewModel = viewModel(),
     onStart: () -> Unit = {},
 ) {
-
     LaunchedEffect(true) {
         viewModel.loadCategories()
     }

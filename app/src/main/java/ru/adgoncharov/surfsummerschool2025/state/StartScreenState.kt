@@ -1,7 +1,6 @@
 package ru.adgoncharov.surfsummerschool2025.state
 
-import android.os.Message
-import ru.adgoncharov.triviaapi.models.Question
+import ru.adgoncharov.database.models.domain.Question
 
 sealed class StartScreenState {
     object Idle : StartScreenState()

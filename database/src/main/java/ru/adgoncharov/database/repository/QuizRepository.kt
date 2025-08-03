@@ -1,5 +1,6 @@
 package ru.adgoncharov.database.repository
 
+import androidx.room.Transaction
 import ru.adgoncharov.database.models.domain.Question
 import ru.adgoncharov.database.models.domain.Quiz
 import ru.adgoncharov.database.models.domain.QuizWithQuestions
@@ -10,6 +11,7 @@ interface QuizRepository {
 
     suspend fun getQuizWithQuestions(quizId: Long): QuizWithQuestions
 
+    @Transaction
     suspend fun insertQuizWithQuestions(quizWithQuestions: QuizWithQuestions): Long
 
     suspend fun deleteQuestionsByQuizId(quizId: Long)

@@ -7,7 +7,7 @@ import java.util.Date
 
 @Entity(tableName = "quiz")
 data class QuizDto(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long = 0,
 

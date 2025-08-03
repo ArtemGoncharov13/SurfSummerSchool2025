@@ -9,4 +9,6 @@ enum class Difficulty(val value: String, val description: String) {
     override fun toString(): String = value
 
     fun getName(): String = description
+
+    fun getDifficultyValue(): String = value
 }

@@ -14,19 +14,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.adgoncharov.database.models.domain.Question
 import ru.adgoncharov.surfsummerschool2025.ui.component.Logo
 import ru.adgoncharov.surfsummerschool2025.ui.component.QuestionCard
 import ru.adgoncharov.surfsummerschool2025.ui.theme.Blue
 import ru.adgoncharov.surfsummerschool2025.ui.theme.White
 import ru.adgoncharov.surfsummerschool2025.ui.theme.interFontFamily
 import ru.adgoncharov.surfsummerschool2025.viewmodels.QuizScreenViewModel
-import ru.adgoncharov.triviaapi.models.Question
+import ru.adgoncharov.triviaapi.models.QuestionModel
 
 @Composable
 fun QuizScreen(
@@ -35,17 +35,16 @@ fun QuizScreen(
     onFinish: (correctAnswer: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(true) {
-        if (questions.isNotEmpty()) {
-            viewModel.startQuiz(questions)
-        }
-    }
-
-    val correctCount by viewModel.correctAnswerCount.collectAsState()
+//    LaunchedEffect(true) {
+//        if (questions.isNotEmpty()) {
+//            viewModel.startQuiz(questions)
+//        }
+//    }
+    Log.d("QuizScreen", "size questions: ${viewModel.totalQuestions()}")
     val quizFinished by viewModel.quizFinished.collectAsState()
 
     if (quizFinished) {
-        onFinish(correctCount)
+        onFinish(viewModel.getCorrectAnswersCount())
         return
     }
 
@@ -55,12 +54,10 @@ fun QuizScreen(
 
     val currentQuestion = viewModel.getCurrentQuestion()
     if (currentQuestion == null) {
-        onFinish(correctCount)
+        onFinish(viewModel.getCorrectAnswersCount())
         return
     }
-    val shuffledAnswers = remember(currentQuestion) {
-        viewModel.getShuffledAnswers()
-    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -80,9 +77,7 @@ fun QuizScreen(
             )
             QuestionCard(
                 currentAnswer = currentIndex + 1,
-                allAnswers = questions.size,
-                question = currentQuestion.question,
-                answers = shuffledAnswers,
+                viewModel = viewModel,
                 selectedAnswer = selectedAnswer,
                 onAnswerSelected = {
                     viewModel.selectAnswer(it)

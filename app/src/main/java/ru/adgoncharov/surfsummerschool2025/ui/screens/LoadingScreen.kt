@@ -26,7 +26,6 @@ import ru.adgoncharov.surfsummerschool2025.ui.theme.Blue
 fun LoadingScreen(
     modifier: Modifier = Modifier,
 ) {
-
     Column(
         modifier = modifier
             .fillMaxSize()

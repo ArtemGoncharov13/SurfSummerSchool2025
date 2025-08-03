@@ -9,6 +9,8 @@ fun QuizDto.toDomain(): Quiz = Quiz(
     totalQuestion = totalQuestion,
     answers = answers,
     shuffledAnswers = shuffledAnswers,
+    category = category,
+    difficulty = difficulty,
     date = date
 )
 
@@ -18,5 +20,7 @@ fun Quiz.toDto(): QuizDto = QuizDto(
     totalQuestion = totalQuestion,
     answers = answers,
     shuffledAnswers = shuffledAnswers,
+    category = category,
+    difficulty = difficulty,
     date = date
 )

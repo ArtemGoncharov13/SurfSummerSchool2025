@@ -24,18 +24,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.adgoncharov.surfsummerschool2025.ui.VariantAnswer
 import ru.adgoncharov.surfsummerschool2025.ui.theme.Black
 import ru.adgoncharov.surfsummerschool2025.ui.theme.LightPurple
 import ru.adgoncharov.surfsummerschool2025.ui.theme.White
 import ru.adgoncharov.surfsummerschool2025.ui.theme.interFontFamily
+import ru.adgoncharov.surfsummerschool2025.viewmodels.QuizResultScreenViewModel
+import ru.adgoncharov.surfsummerschool2025.viewmodels.QuizScreenViewModel
 
 @Composable
 fun QuestionCard(
     currentAnswer: Int,
-    allAnswers: Int,
-    question: String,
-    answers: List<String>,
+    viewModel: QuizScreenViewModel,
     selectedAnswer: String?,
     onAnswerSelected: (String) -> Unit,
     onNextClicked: () -> Unit,
@@ -50,7 +51,7 @@ fun QuestionCard(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Top(currentAnswer, allAnswers, question)
+            Top(currentAnswer, viewModel)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -59,7 +60,7 @@ fun QuestionCard(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                answers.forEach { answer ->
+                viewModel.getAllShuffledAnswers()[currentAnswer - 1].forEach { answer ->
                     var variant = when {
                         selectedAnswer == null -> VariantAnswer.NONE
                         selectedAnswer == answer -> VariantAnswer.SELECTED
@@ -75,7 +76,7 @@ fun QuestionCard(
                     }
                 }
 
-                repeat((5 - answers.size).coerceAtLeast(0)) {
+                repeat((0).coerceAtLeast(0)) {
                     AnswerCard(
                         answer = VariantAnswer.NONE,
                         answerDescription = "",
@@ -101,16 +102,30 @@ fun QuestionCard(
 @Composable
 fun Top(
     currentAnswer: Int,
-    allAnswers: Int,
-    question: String,
+    viewModel: QuizScreenViewModel,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
-        ProgressBar(currentAnswer, allAnswers)
-        QuestionText(question)
+        ProgressBar(currentAnswer = currentAnswer, totalQuestions = viewModel.totalQuestions())
+        QuestionText(viewModel.getQuestion(currentAnswer - 1).question)
+    }
+}
+
+@Composable
+fun Top(
+    currentAnswer: Int,
+    viewModel: QuizResultScreenViewModel,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+
+        ) {
+        ProgressBar(currentAnswer = currentAnswer, totalQuestions = viewModel.totalQuestions())
+        QuestionText(viewModel.getQuestion(currentAnswer).question)
     }
 }
 
@@ -119,19 +134,19 @@ fun Top(
 )
 @Composable
 fun TopPreview() {
-    Top(1, 5, "Как переводится слово \"apple\"?")
+    //Top(1, 5, "Как переводится слово \"apple\"?")
 }
 
 @Composable
 fun ProgressBar(
     currentAnswer: Int,
-    allAnswers: Int,
+    totalQuestions: Int,
     fontColor: Color = LightPurple,
     modifier: Modifier = Modifier
 ) {
     Text(
         modifier = modifier,
-        text = "Вопрос $currentAnswer из $allAnswers",
+        text = "Вопрос $currentAnswer из $totalQuestions",
         fontSize = 16.sp,
         fontFamily = interFontFamily,
         color = fontColor,

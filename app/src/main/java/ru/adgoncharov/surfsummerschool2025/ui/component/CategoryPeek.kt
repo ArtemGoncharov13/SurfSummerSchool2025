@@ -31,7 +31,10 @@ fun CategoryPeek(viewModel: FilterScreenViewModel) {
     val categories by viewModel.categories.collectAsState()
     val selectedCategoryId by viewModel.currentCategory.collectAsState()
 
-    FilterCard(title = "Категория", selectedItem = viewModel.getCategoryName(selectedCategoryId)) {
+    FilterCard(
+        title = "Категория",
+        selectedItem = viewModel.getCategoryName(selectedCategoryId)
+    ) {
         showSheet = true
     }
 

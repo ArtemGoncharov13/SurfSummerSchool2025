@@ -34,9 +34,9 @@ android {
 }
 
 dependencies {
-
+    ksp(libs.room.compiler)
     implementation(libs.room.ktx)
-    implementation(libs.room.compiler)
+
     implementation(libs.room.runtime)
     implementation(libs.gson)
 

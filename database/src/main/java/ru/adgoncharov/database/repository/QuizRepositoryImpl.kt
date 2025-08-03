@@ -1,5 +1,7 @@
 package ru.adgoncharov.database.repository
 
+import android.util.Log
+import androidx.room.Transaction
 import ru.adgoncharov.database.dao.QuizDao
 import ru.adgoncharov.database.mappers.toDomain
 import ru.adgoncharov.database.mappers.toDto
@@ -16,11 +18,14 @@ class QuizRepositoryImpl(private val quizDao: QuizDao) : QuizRepository {
         return quizDao.getQuizWithQuestions(quizId).toDomain()
     }
 
+    @Transaction
     override suspend fun insertQuizWithQuestions(quizWithQuestions: QuizWithQuestions): Long {
-        val quizId = insertQuiz(quizWithQuestions.quiz)
+        Log.d("DB", "id//")
 
+        val quizId = insertQuiz(quizWithQuestions.quiz.copy(id = 0))
+        Log.d("DB", "id2//${quizId}")
         val questionsWithQuizId = quizWithQuestions.questions.map { question ->
-            question.copy(quizId = quizId)
+            question.copy(id = 0, quizId = quizId)
         }
 
         insertQuestions(questionsWithQuizId)
